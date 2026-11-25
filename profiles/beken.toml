@@ -1,0 +1,18 @@
+name = "beken"
+repository = "https://github.com/Newmota/framework-beken-bdk"
+profile_revision = 1
+submodules = false
+# The BDK build runs no git; its revision header (release/osk_revision.h) is tracked.
+exclude_top_level_dotfiles = true
+# Round 1: dotfiles only; every other tracked file stays.
+exclude = []
+require = [
+  "beken378/app/config",
+  "beken378/driver/entry",
+  "beken378/func/mbedtls/mbedtls/library/ssl_srv.c",
+  "beken378/func/user_driver/BkDriverFlash.c",
+  "beken378/lib",
+  "os/FreeRTOSv9.0.0/FreeRTOS/Source",
+  "release/osk_revision.h",
+  "build/bk7231n.lds",
+]
