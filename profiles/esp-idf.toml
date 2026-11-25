@@ -1,0 +1,27 @@
+name = "esp-idf"
+repository = "https://github.com/Newmota/esp-idf"
+profile_revision = 1
+submodules = true
+describe_match = "v*.*"
+describe_abbrev = 8
+# ESP-IDF's build prefers version.txt over git describe (tools/cmake/build.cmake).
+version_file = "version.txt"
+exclude_top_level_dotfiles = true
+# Round 1: explicit top-level paths only. Nested examples/ and test dirs stay (OpenThread compiles
+# components/openthread/openthread/examples; Newmota's build may use others).
+exclude = ["docs", "examples"]
+require = [
+  "install.sh",
+  "export.sh",
+  "tools/idf.py",
+  "tools/idf_tools.py",
+  "tools/tools.json",
+  "tools/cmake",
+  "tools/ldgen",
+  "tools/idf_py_actions",
+  "tools/requirements",
+  "tools/ci",
+  "components/openthread/openthread/examples",
+  "components/wpa_supplicant",
+  "version.txt",
+]

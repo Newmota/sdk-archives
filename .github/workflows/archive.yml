@@ -1,0 +1,54 @@
+name: Build SDK archive
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Profile (Newmota SDK key)
+        type: choice
+        options: [esp-idf, esp-idf-v6.1]
+      commit:
+        description: Full commit hash in the profile's repository
+        required: true
+      version:
+        description: SDK version (as in Newmota config/sdk/<key>.toml)
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-${{ inputs.profile }}-${{ inputs.commit }}
+
+jobs:
+  archive:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build archive
+        id: build
+        env:
+          PROFILE: ${{ inputs.profile }}
+          COMMIT: ${{ inputs.commit }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          python scripts/make_archive.py --profile "profiles/$PROFILE.toml" \
+            --commit "$COMMIT" --version "$VERSION" --out dist --work "$RUNNER_TEMP/work" | tee dist/result.json
+          echo "base=$(python -c 'import json; print(json.load(open("dist/result.json"))["asset"].removesuffix(".tar.xz"))')" >> "$GITHUB_OUTPUT"
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BASE: ${{ steps.build.outputs.base }}
+          PROFILE: ${{ inputs.profile }}
+          COMMIT: ${{ inputs.commit }}
+        run: |
+          if gh release view "$BASE" >/dev/null 2>&1; then
+            echo "release $BASE exists; published archives are never rebuilt" >&2
+            exit 1
+          fi
+          gh release create "$BASE" --target "$GITHUB_SHA" --title "$BASE" \
+            --notes "Profile \`$PROFILE\` at commit \`$COMMIT\`. See $BASE.json for the manifest." \
+            "dist/$BASE.tar.xz" "dist/$BASE.tar.xz.sha256" "dist/$BASE.json"
