@@ -35,6 +35,7 @@ jobs:
           COMMIT: ${{ inputs.commit }}
           VERSION: ${{ inputs.version }}
         run: |
+          mkdir -p dist
           python scripts/make_archive.py --profile "profiles/$PROFILE.toml" \
             --commit "$COMMIT" --version "$VERSION" --out dist --work "$RUNNER_TEMP/work" | tee dist/result.json
           echo "base=$(python -c 'import json; print(json.load(open("dist/result.json"))["asset"].removesuffix(".tar.xz"))')" >> "$GITHUB_OUTPUT"
