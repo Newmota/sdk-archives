@@ -11,6 +11,9 @@ with one profile from [`profiles/`](profiles), and published as a GitHub release
 - Only files tracked at the pinned commit (including nested submodules) are packed, sorted, with
   fixed owners and the commit time, so the tar stream is reproducible. A published archive is never
   rebuilt; a strip-list change raises `profile_revision`.
+- Values an SDK's build would read from git (`git describe`, a short hash) are generated into the
+  archive from the clone: `version_file`, and `[generated_files]` templates with `@GIT_SHORT8@` and
+  `@GIT_DESCRIBE_ALWAYS8@`.
 
 ## Build an archive
 

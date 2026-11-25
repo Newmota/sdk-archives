@@ -1,0 +1,70 @@
+name = "bouffalo"
+repository = "https://github.com/Newmota/bouffalo_sdk"
+profile_revision = 1
+submodules = false
+exclude_top_level_dotfiles = true
+# Round 1: docs, every example except boot2_isp (Newmota compiles its port), the flash and mfg GUIs,
+# and OpenOCD. Windows host tools (tools/cmake, make, ninja) stay.
+exclude = [
+  "docs",
+  "examples/README.md",
+  "examples/audio",
+  "examples/bflb_block_pool",
+  "examples/bflog",
+  "examples/bl618dg_dualcore",
+  "examples/btble",
+  "examples/cherryusb",
+  "examples/coex",
+  "examples/coremark_v1.01",
+  "examples/crash",
+  "examples/dhrystone",
+  "examples/dsp",
+  "examples/easyflash",
+  "examples/fatfs",
+  "examples/freertos",
+  "examples/helloworld",
+  "examples/littlefs",
+  "examples/lmac154",
+  "examples/log_dbg_assert",
+  "examples/lua",
+  "examples/lvgl",
+  "examples/mbedtls",
+  "examples/memheap",
+  "examples/memtester",
+  "examples/mquickjs",
+  "examples/openamp",
+  "examples/partition",
+  "examples/peripherals",
+  "examples/pmu",
+  "examples/posix",
+  "examples/printf",
+  "examples/shell",
+  "examples/solution",
+  "examples/thread",
+  "examples/tpjdec_disp",
+  "examples/wifi",
+  "tools/bflb_tools/bouffalo_flash_cube",
+  "tools/bflb_tools/bouffalo_mfg_tool",
+  "tools/openocd",
+]
+require = [
+  "examples/boot2_isp",
+  "tools/bflb_tools/bflb_fw_post_proc",
+  "tools/kconfig",
+  "tools/lpfw",
+  "tools/genromfs",
+  "tools/genlfs",
+  "tools/cmake",
+  "tools/make",
+  "tools/ninja",
+  "components/wireless/wifi4/wpa_supplicant/test/test_crypto-bl.c",
+  "cmake/toolchain.cmake",
+  "GIT_HASH",
+  "drivers/lhal/VERSION",
+]
+# The build asks git for the SDK hash (root CMakeLists.txt, GIT_HASH since the Newmota fork) and the
+# LHAL version (drivers/lhal/CMakeLists.txt, VERSION first). The fork has no tags, so describe --always
+# gives the same short hash in every clone.
+[generated_files]
+"GIT_HASH" = "@GIT_SHORT8@\n"
+"drivers/lhal/VERSION" = "LHAL_VERSION \"@GIT_DESCRIBE_ALWAYS8@\"\n"

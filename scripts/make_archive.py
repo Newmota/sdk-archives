@@ -50,6 +50,7 @@ def load_profile(path: Path) -> dict:
         "exclude_top_level_dotfiles",
         "exclude",
         "require",
+        "generated_files",
     }
     unknown = set(profile) - allowed
     if unknown:
@@ -140,6 +141,30 @@ def describe(profile: dict, source: Path) -> str | None:
         return None
     abbrev = int(profile.get("describe_abbrev", 8))
     return git("describe", "--tags", f"--abbrev={abbrev}", f"--match={match}", cwd=source).strip()
+
+
+# Placeholders for generated_files: the values an SDK's build would otherwise ask git for.
+GIT_PLACEHOLDERS = {
+    "@GIT_SHORT8@": ("rev-parse", "--short=8", "HEAD"),
+    "@GIT_DESCRIBE_ALWAYS8@": ("describe", "--abbrev=8", "--tags", "--dirty", "--always"),
+}
+
+
+def generated_files(profile: dict, source: Path) -> dict[str, bytes]:
+    """Render [generated_files] (SDK-relative path = template) with git-derived values."""
+    result = {}
+    for name, template in sorted(profile.get("generated_files", {}).items()):
+        pure = PurePosixPath(name)
+        if pure.is_absolute() or ".." in pure.parts or not isinstance(template, str):
+            raise SystemExit(f"invalid generated file '{name}'")
+        if (source / name).exists():
+            raise SystemExit(f"generated file '{name}' would replace a tracked file")
+        text = template
+        for placeholder, command in GIT_PLACEHOLDERS.items():
+            if placeholder in text:
+                text = text.replace(placeholder, git(*command, cwd=source).strip())
+        result[name] = text.encode()
+    return result
 
 
 def _info(name: str, mtime: int) -> tarfile.TarInfo:
@@ -234,6 +259,7 @@ def main() -> int:
         if described is None:
             raise SystemExit("version_file needs describe_match")
         generated[profile["version_file"]] = (described + "\n").encode()
+    generated.update(generated_files(profile, source))
     submodules = []
     if profile.get("submodules"):
         for line in git("submodule", "status", "--recursive", cwd=source).splitlines():
