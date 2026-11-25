@@ -28,10 +28,13 @@ MANIFEST = "NEWMOTA_SDK.json"
 
 
 def git(*arguments: str, cwd: Path, capture: bool = True) -> str:
-    result = subprocess.run(
-        ["git", *arguments], cwd=cwd, check=True, text=True, capture_output=capture
-    )
-    return result.stdout if capture else ""
+    """Run git; uncaptured progress goes to stderr so stdout stays the JSON result."""
+    if capture:
+        return subprocess.run(
+            ["git", *arguments], cwd=cwd, check=True, text=True, capture_output=True
+        ).stdout
+    subprocess.run(["git", *arguments], cwd=cwd, check=True, stdout=sys.stderr)
+    return ""
 
 
 def load_profile(path: Path) -> dict:
