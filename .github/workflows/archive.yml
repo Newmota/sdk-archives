@@ -6,7 +6,7 @@ on:
       profile:
         description: Profile (Newmota SDK key)
         type: choice
-        options: [esp-idf, esp-idf-v6.1]
+        options: [esp-idf, esp-idf-v6.1, pico-sdk]
       commit:
         description: Full commit hash in the profile's repository
         required: true

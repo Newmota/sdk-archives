@@ -1,0 +1,37 @@
+name = "pico-sdk"
+repository = "https://github.com/Newmota/pico-sdk"
+profile_revision = 1
+submodules = true
+# Pico takes its version from pico_sdk_version.cmake; its CMake runs no git.
+exclude_top_level_dotfiles = true
+# Round 1: explicit paths only. test/ is added only when the SDK is the top-level project.
+exclude = [
+  "test",
+  "lib/btstack/port",
+  "lib/btstack/test",
+  "lib/btstack/example",
+  "lib/btstack/doc",
+  "lib/mbedtls/tests",
+  "lib/mbedtls/programs",
+  "lib/tinyusb/examples",
+  "lib/tinyusb/test",
+  "lib/tinyusb/docs",
+]
+require = [
+  "pico_sdk_init.cmake",
+  "pico_sdk_version.cmake",
+  "docs/CMakeLists.txt",
+  "src/rp2_common/pico_btstack/LICENSE.RP",
+  "lib/btstack/src",
+  "lib/btstack/platform",
+  "lib/btstack/3rd-party",
+  "lib/btstack/chipset",
+  "lib/btstack/tool",
+  "lib/btstack/LICENSE",
+  "lib/cyw43-driver/firmware",
+  "lib/lwip/src",
+  "lib/mbedtls/library",
+  "lib/mbedtls/framework",
+  "lib/tinyusb/src",
+  "lib/tinyusb/hw/bsp/family_support.cmake",
+]
