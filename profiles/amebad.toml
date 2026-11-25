@@ -1,0 +1,21 @@
+name = "amebad"
+repository = "https://github.com/Newmota/ameba-rtos-d"
+profile_revision = 1
+submodules = false
+# The only git call (GEN_GIT_VER in project_hp/asdk/Makefile.include.gen) serves the wlan library
+# targets, which Newmota does not build.
+exclude_top_level_dotfiles = true
+# Round 1: explicit paths only.
+exclude = [
+  "project/realtek_amebaD_va0_example/example_sources",
+  "tools/probe",
+  "tools/bluetooth",
+]
+require = [
+  "project/realtek_amebaD_va0_example/GCC-RELEASE/project_lp/asdk/config/.config",
+  "project/realtek_amebaD_va0_example/GCC-RELEASE/project_hp/asdk/config/.config",
+  "component/common/example",
+  "component/soc/realtek/amebad/fwlib/usrcfg",
+  "tools/AmebaD/Image_Tool/imgtool_flashloader_amebad.bin",
+  "tools/newmota/ota_checksum.c",
+]
